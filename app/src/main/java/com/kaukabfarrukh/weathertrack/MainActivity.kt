@@ -15,11 +15,12 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.state.collectAsState
+//import androidx.compose.runtime.state.collectAsState
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.tooling.preview.Preview
 import com.kaukabfarrukh.weathertrack.WeatherViewModel
 import com.kaukabfarrukh.weathertrack.ui.theme.WeatherTrackTheme
 
@@ -33,8 +34,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    @Composable
-    fun WeatherApp() {
+    @Composable fun WeatherApp() {
         val navController = rememberNavController()
         Scaffold(
             topBar = {
@@ -56,27 +56,17 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    @Composable fun CurrentWeatherScreen(navController: NavController) {
+        val viewModel: WeatherViewModel = viewModel()
+        val weatherData by viewModel.weatherData.observeAsState()
+        val errorMessage by viewModel.errorMessages.observeAsState("")
 
-        @Composable
-        fun CurrentWeatherScreen(navController: NavController) {
-            val viewModel: WeatherViewModel = viewModel()
-            val weatherData by viewModel.weatherData.observeAsState()
-            val errorMessage by viewModel.errorMessages.observeAsState("")
-
-
-
-
-            Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
+        Column(modifier = Modifier.fillMaxSize().padding(16.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
-                    weatherData?.let { data ->
-                        Text("Current weather: ${data.weather.first().description}, ${data.main.temp}°C")
-                            style = MaterialTheme.typography.body1)
+            weatherData?.let { data ->
+                Text("Current weather: ${data.weather.first().description} ${data.main.temp}°C")
                 Button(onClick = { navController.navigate("forecast") }) {
                     Text("View 5-Day Forecast")
                 }
@@ -91,28 +81,24 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-        @Composable
-        fun ForecastScreen(navController: NavController) {
-            val viewModel: WeatherViewModel = viewModel()
-            val forecastData by viewModel.weatherData.observeAsState()
-            val errorMessage by viewModel.errorMessages.observeAsState("")
+    @Composable fun ForecastScreen(navController: NavController) {
+        val viewModel: WeatherViewModel = viewModel()
+        val forecastData by viewModel.weatherData.observeAsState()
+        val errorMessage by viewModel.errorMessages.observeAsState("")
 
-
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
+        Column(modifier = Modifier.fillMaxSize().padding(16.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            forecastData?.let {
+/*            forecastData?.let {
                 it.list.forEach { forecast ->
-                    Text("Forecast for ${forecast.dt}: ${forecast.weather.first().description} with a high of ${forecast.main.tempMax}°C and low of ${forecast.main.tempMin}°C")
+                    Text("Forecast for ${forecast.dt}: ${forecast.weather.first().description}")
+                    Text("with a high of ${forecast.main.tempMax}°C and low of ${forecast.main.tempMin}°C")
                 }
             } ?: Text("Loading forecast...")
             if (errorMessage.isNotEmpty()) {
                 Text(errorMessage, color = Color.Red)
-            }
+            }*/
             Spacer(Modifier.height(16.dp))
             Button(onClick = { navController.popBackStack() }) {
                 Text("Back to Current Weather")
@@ -120,7 +106,16 @@ class MainActivity : ComponentActivity() {
         }
 
         LaunchedEffect(true) {
-            viewModel.fetchForecast("Eslöv", "your_api_key_here") // Replace "your_api_key_here" with your actual API key
+            // Replace "your_api_key_here" with your actual API key
+            // viewModel.fetchForecast("Eslöv", "your_api_key_here")
+
+            viewModel.fetchForecast("Eslöv", "your_api_key_here")
         }
     }
 }
+/*
+@Preview(showBackground = true)
+@Composable fun AppPreview() {
+    WeatherApp()
+}
+*/

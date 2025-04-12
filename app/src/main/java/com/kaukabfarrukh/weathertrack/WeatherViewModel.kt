@@ -20,6 +20,12 @@ class WeatherViewModel(private val repository: WeatherRepository) : ViewModel() 
             repository.fetchWeather(city, apiKey)
         }
     }
+
+    fun fetchForecast(city: String, apiKey: String) {
+        viewModelScope.launch {
+            repository.fetchForecast(city, apiKey)
+        }
+    }
 }
 
 class WeatherRepository {
@@ -51,5 +57,9 @@ class WeatherRepository {
         } catch (e: Exception) {
             _errorMessages.postValue("Failed to fetch weather data: ${e.localizedMessage}")
         }
+    }
+
+    suspend fun fetchForecast(city: String, apiKey: String) {
+
     }
 }
